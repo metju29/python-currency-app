@@ -1,3 +1,4 @@
+from sqlalchemy import text
 from utils.utils import generate_dates
 from utils.web import get_rates
 from utils.files import make_filename, save_data_to_file
@@ -22,6 +23,19 @@ config = load_config()
 
 db_con = open_db(config)
 make_db_table(db_con)
+
+rate = {"currency": "euro", "code": "EUR", "mid": 4.3646, "date": "2024-01-24"}
+
+insert_query = '''
+INSERT INTO rates (data, currency_code, exchange_rate)
+VALUES (:date, :code, :mid);
+'''
+try:
+    db_con.execute(text(insert_query), rate)
+    db_con.commit()
+except:
+    print("Data insert error.")
+
 close_db(db_con)
 
 
