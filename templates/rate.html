@@ -66,6 +66,10 @@
         tr:hover {
             background-color: #f1f1f1;
         }
+
+        #exchangeRateChart {
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
@@ -94,7 +98,11 @@
     <button type="button" onclick="submitForm()">Get Rates</button>
 </form>
 
+<h2>Exchange Rate Chart for: {{ currency.upper() }}</h2>
+<canvas id="exchangeRateChart"></canvas>
+
 <h2>Exchange Rates for: {{ currency.upper() }}</h2>
+
 <table>
     <thead>
         <tr>
@@ -114,6 +122,7 @@
 
 {% include 'footer.html' %}
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
 function submitForm() {
     let currency = document.getElementById("currency").value;
@@ -130,6 +139,36 @@ function submitForm() {
 
     window.location.href = url;
 }
+
+// Chart.js Initialization
+document.addEventListener("DOMContentLoaded", function() {
+    const ctx = document.getElementById('exchangeRateChart').getContext('2d');
+    const labels = {{ data | map(attribute='date') | list | tojson }};
+    const rates = {{ data | map(attribute='rate') | list | tojson }};
+
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                data: rates,
+                borderColor: 'blue',
+                backgroundColor: 'rgba(0, 0, 255, 0.1)',
+                fill: true,
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { display: false }
+            },
+            scales: {
+                x: { title: { display: true, text: 'Date' } },
+                y: { title: { display: true, text: 'Exchange Rate' } }
+            }
+        }
+    });
+});
 </script>
 
 </body>
