@@ -82,10 +82,14 @@
     </select>
 
     <label for="date_from">Date range from:</label>
-    <input type="date" id="date_from" name="date_from" value="{{ start_date }}">
-
+    <input type="date" id="date_from" name="date_from" 
+           min="{{ date_range[0] }}" max="{{ date_range[1] }}" 
+           value="{{ start_date }}">
+    
     <label for="date_to">to:</label>
-    <input type="date" id="date_to" name="date_to" value="{{ end_date }}">
+    <input type="date" id="date_to" name="date_to" 
+           min="{{ date_range[0] }}" max="{{ date_range[1] }}" 
+           value="{{ end_date }}">
 
     <button type="button" onclick="submitForm()">Get Rates</button>
 </form>

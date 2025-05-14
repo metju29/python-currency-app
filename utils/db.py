@@ -144,3 +144,27 @@ def currency_list_from_db(db_con):
     results = [r[0] for r in db_results]
 
     return results
+
+def date_range_from_db(db_con, currency_code):
+    query = """
+        SELECT 
+            MIN(data) AS min_date,
+            MAX(data) AS max_date
+        FROM 
+            rates
+        WHERE 
+            currency_code = :currency_code;
+    """
+    try:
+        # Execute the query and fetch the result
+        result = db_con.execute(text(query), {"currency_code": currency_code}).fetchone()
+        # Check if the result is not empty and contains valid dates
+        if result and result[0] and result[1]:
+            return result[0], result[1]
+        else:
+            return None, None
+
+    except Exception as e:
+        # Log the error and return None for both dates
+        logger.error(f"Failed to fetch date range for {currency_code}: {str(e)}")
+        return None, None

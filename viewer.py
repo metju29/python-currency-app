@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 from flask import Flask, render_template
 from utils.config import load_config
-from utils.db import open_db, load_data_from_db, close_db, currency_list_from_db
+from utils.db import open_db, load_data_from_db, close_db, currency_list_from_db, date_range_from_db
 
 
 CONFIG_FILE = "config.yaml"
@@ -31,10 +31,12 @@ def rate(currency="eur", start_date=None, end_date=None):
 
     # Connect to the database
     db = open_db(config)
-    # Fetch results
-    results = load_data_from_db(db, currency, start_date, end_date)
     # Retrieve the list of currencies
     currencies = currency_list_from_db(db)
+    # Retrieve the date range (min and max dates) for the selected currency
+    date_range = date_range_from_db(db, currency.upper())
+    # Fetch results
+    results = load_data_from_db(db, currency, start_date, end_date)
     # Close the database connection
     close_db(db)
 
@@ -44,7 +46,8 @@ def rate(currency="eur", start_date=None, end_date=None):
                            currencies=currencies, 
                            currency=currency, 
                            start_date=start_date, 
-                           end_date=end_date
+                           end_date=end_date,
+                           date_range=date_range
     )
 
 if __name__ == "__main__":
