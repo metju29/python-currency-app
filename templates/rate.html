@@ -1,21 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Exchange Rates</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+
+        #currencyForm {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        #currencyForm label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        #currencyForm select,
+        #currencyForm input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        #currencyForm button {
+            background-color: #007bff;
+            color: #ffffff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        #currencyForm button:hover {
+            background-color: #0056b3;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #ffffff;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #007bff;
+            color: #ffffff;
+        }
+
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+    </style>
+</head>
+<body>
+
 <form id="currencyForm" action="" method="get">
     <label for="currency">Select Currency:</label>
     <select id="currency" name="currency">
-        {% for currency in currencies %}
-            <option value="{{ currency }}">{{ currency.upper() }}</option>
+        {% for currency_option in currencies %}
+            <option value="{{ currency_option }}" 
+                    {% if currency_option == currency %}selected{% endif %}>
+                    {{ currency_option.upper() }}
+            </option>
         {% endfor %}
     </select>
 
     <label for="date_from">Date range from:</label>
-    <input type="date" id="date_from" name="date_from">
+    <input type="date" id="date_from" name="date_from" value="{{ start_date }}">
 
     <label for="date_to">to:</label>
-    <input type="date" id="date_to" name="date_to">
+    <input type="date" id="date_to" name="date_to" value="{{ end_date }}">
 
     <button type="button" onclick="submitForm()">Get Rates</button>
 </form>
 
-<table border="1">
+<h2>Exchange Rates for: {{ currency.upper() }}</h2>
+<table>
     <thead>
         <tr>
             <th>Date</th>
@@ -31,7 +107,8 @@
         {% endfor %}
     </tbody>
 </table>
-{% include 'footer.html' %} 
+
+{% include 'footer.html' %}
 
 <script>
 function submitForm() {
@@ -46,7 +123,10 @@ function submitForm() {
             url += `/${dateTo}`;
         }
     }
-    
+
     window.location.href = url;
 }
 </script>
+
+</body>
+</html>

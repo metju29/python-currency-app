@@ -39,7 +39,13 @@ def rate(currency="eur", start_date=None, end_date=None):
     close_db(db)
 
     # Passing results to the template
-    return render_template("rate.html", data=results, currencies=currencies)
+    return render_template("rate.html", 
+                           data=results, 
+                           currencies=currencies, 
+                           currency=currency, 
+                           start_date=start_date, 
+                           end_date=end_date
+    )
 
 if __name__ == "__main__":
     app.run(host ='0.0.0.0', port=5000)
