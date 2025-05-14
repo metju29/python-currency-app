@@ -121,3 +121,26 @@ def load_data_from_db(db_con, currency, start_date, end_date):
         results.append({"date": r[0], "rate": r[1]})
     
     return results
+
+def currency_list_from_db(db_con):
+    query = """
+        SELECT DISTINCT
+            currency_code
+        FROM
+            rates
+        ORDER BY
+            currency_code ASC;
+    """
+
+    # Try to fetch currency codes from the database
+    try:
+        db_results = db_con.execute(text(query))
+    except Exception as e:
+        # If failed, log the error and return an empty list
+        logger.error(f"Failed to fetch currency list: {str(e)}")
+        return []
+    
+    # Convert database results to a list
+    results = [r[0] for r in db_results]
+
+    return results

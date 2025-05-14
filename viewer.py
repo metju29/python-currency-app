@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
-from flask import Flask, jsonify
+from flask import Flask, render_template
 from utils.config import load_config
-from utils.db import open_db, load_data_from_db, close_db
+from utils.db import open_db, load_data_from_db, close_db, currency_list_from_db
 
 
 CONFIG_FILE = "config.yaml"
@@ -29,15 +29,17 @@ def rate(currency="eur", start_date=None, end_date=None):
     if not end_date:
         end_date = today.strftime("%Y-%m-%d")
 
-    # Podłączenie do bazy danych
+    # Connect to the database
     db = open_db(config)
-    # Pobieranie wyników
+    # Fetch results
     results = load_data_from_db(db, currency, start_date, end_date)
-    # Zamknięcie połączenia z bazą danych
+    # Retrieve the list of currencies
+    currencies = currency_list_from_db(db)
+    # Close the database connection
     close_db(db)
 
     # Passing results to the template
-    return jsonify(results)
+    return render_template("rate.html", data=results, currencies=currencies)
 
 if __name__ == "__main__":
     app.run(host ='0.0.0.0', port=5000)

@@ -1,0 +1,52 @@
+<form id="currencyForm" action="" method="get">
+    <label for="currency">Select Currency:</label>
+    <select id="currency" name="currency">
+        {% for currency in currencies %}
+            <option value="{{ currency }}">{{ currency.upper() }}</option>
+        {% endfor %}
+    </select>
+
+    <label for="date_from">Date range from:</label>
+    <input type="date" id="date_from" name="date_from">
+
+    <label for="date_to">to:</label>
+    <input type="date" id="date_to" name="date_to">
+
+    <button type="button" onclick="submitForm()">Get Rates</button>
+</form>
+
+<table border="1">
+    <thead>
+        <tr>
+            <th>Date</th>
+            <th>Rate</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for entry in data %}
+            <tr>
+                <td>{{ entry.date }}</td>
+                <td>{{ entry.rate }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% include 'footer.html' %} 
+
+<script>
+function submitForm() {
+    let currency = document.getElementById("currency").value;
+    let dateFrom = document.getElementById("date_from").value;
+    let dateTo = document.getElementById("date_to").value;
+    let url = `/rate/${currency}`;
+    
+    if (dateFrom) {
+        url += `/${dateFrom}`;
+        if (dateTo) {
+            url += `/${dateTo}`;
+        }
+    }
+    
+    window.location.href = url;
+}
+</script>
