@@ -127,3 +127,6 @@ dmypy.json
 # Database files
 *.sqlite
 data.sqlite
+
+# Log files
+logs/

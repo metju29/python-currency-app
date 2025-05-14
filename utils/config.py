@@ -1,9 +1,15 @@
 import logging
 import yaml
 from pathlib import Path
+from datetime import datetime
 
-# Configure logger
-log_file = Path(__file__).parent.parent / 'currency_app.log'
+# Create logs directory if it doesn't exist
+logs_dir = Path(__file__).parent.parent / 'logs'
+logs_dir.mkdir(exist_ok=True)
+
+# Generate log file name with current date at the beginning
+log_file = logs_dir / f"{datetime.now().strftime('%Y-%m-%d')}_currency_app.log"
+
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',

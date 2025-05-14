@@ -86,3 +86,38 @@ def save_data_to_db(currency, db_con):
     except Exception as e:
         logger.error(f"Error while saving currency data to database: {str(e)}")
         raise
+
+def load_data_from_db(db_con, currency, start_date, end_date):
+    params = {
+        "currency": currency.upper(),
+        "start_date": start_date,
+        "end_date": end_date,
+    }
+
+    query = f"""
+    SELECT
+        data, exchange_rate
+    FROM 
+        rates
+    WHERE
+        currency_code = :currency
+        AND data >= :start_date
+        AND data <= :end_date
+    ORDER BY
+        data ASC;
+    """
+    
+    # Try to fetch data from the database
+    try:
+        db_results = db_con.execute(text(query), params)
+    except Exception as e:
+        # If failed, log the error and return an empty list
+        logger.error(f"Failed to fetch exchange rates: {str(e)}")
+        return []
+    
+    results = []
+    for r in db_results:
+        # Element [0] = date, [1] = rate
+        results.append({"date": r[0], "rate": r[1]})
+    
+    return results
