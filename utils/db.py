@@ -1,5 +1,6 @@
 import logging
 from sqlalchemy import create_engine, text
+from sqlalchemy.exc import IntegrityError
 
 # Get logger
 logger = logging.getLogger(__name__)
@@ -83,6 +84,9 @@ def save_data_to_db(currency, db_con):
         db_con.execute(text(insert_query), currency)
         db_con.commit()
         logger.info(f"Successfully saved currency data: {currency['code']} for date {currency['data']}")
+    except IntegrityError:
+        db_con.rollback()
+        logger.debug(f"Duplicate skipped: {currency['code']} for date {currency['data']}")
     except Exception as e:
         logger.error(f"Error while saving currency data to database: {str(e)}")
         raise
