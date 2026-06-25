@@ -1,43 +1,62 @@
-# Python Currency App
+# Currency App
 
-## Features
+Fetches historical exchange rates from the [NBP API](https://api.nbp.pl/) (National Bank of Poland), stores them in a local database, and serves them through a web interface with an interactive chart.
 
-* The app retrieves up-to-date currency exchange rates from the National Bank of Poland API, providing users with reliable exchange information.
-* Fetched data is saved into a local database for further processing and analysis.
-* Users can browse currency rates via a simple web interface, selecting currencies and date ranges.
-* The date selection form validates input, restricting the date range to the available data for the chosen currency to prevent errors.
-* The template includes CSS styling, remembers previously selected dates in the form, and offers enhanced currency selection logic to improve user experience.
+![screenshot](docs/screenshot_1.png)
 
-## Technologies
+## How it works
 
-* Flask
-* SQLAlchemy
-* Docker
-* requests
+```
+NBP API → loader.py (ETL) → SQLite DB → viewer.py (Flask) → Browser
+```
 
-## Installation
+- **loader.py** — fetches rates for configured currencies and date range, saves to DB (and optionally to files)
+- **viewer.py** — Flask app for browsing rates by currency and date range, with a Chart.js line chart
 
-1. Clone the repository:
+## Tech stack
 
-   ```bash
-   git clone https://github.com/metju29/python-currency-app.git
-   cd python-currency-app
-   ```
+- Python, Flask, SQLAlchemy
+- Chart.js
+- Docker
+- NBP public API (no key required)
 
-2. Run the command to execute `loader.py`, which will fetch data from the NBP API and create the database:
+## Setup
 
-   ```bash
-   python loader.py
-   ```
+### 1. Clone and configure
 
-3. Build the Docker image:
+```bash
+git clone https://github.com/metju29/python-currency-app.git
+cd python-currency-app
+```
 
-   ```bash
-   docker build -t currency-app .
-   ```
+Edit `config.yaml` to set currencies and start date:
 
-4. Run the container:
+```yaml
+currencies: [eur, usd, gbp]
+start_date: "2024-01-01"
+save_to_db: true
+save_to_file: false
+output_folder: rates
+```
 
-   ```bash
-   docker run -p 5000:5000 currency-app
-   ```
+### 2. Load data
+
+```bash
+pip install -r requirements.txt
+python loader.py
+```
+
+### 3. Run with Docker
+
+```bash
+docker build -t currency-app .
+docker run -p 5000:5000 -v $(pwd)/rates.db:/app/rates.db currency-app
+```
+
+Open [http://localhost:5000](http://localhost:5000)
+
+### 3. Run locally (without Docker)
+
+```bash
+python viewer.py
+```
